@@ -58,7 +58,7 @@ with open(output_file_path, "w") as f:
     header += "\tGFLOPS\n"
     f.write(header)
 
-for nblocks in range(2, NBLOCKS, 2):
+for nblocks in range(2, NBLOCKS+2, 2):
     for (NCPU, NCUDA, TCUDA) in hardware_env:
         for (SCHED, PRIOR) in scheduling_params:
             # 设置环境变量
