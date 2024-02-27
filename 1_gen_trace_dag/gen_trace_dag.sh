@@ -11,6 +11,7 @@
 task_name=$1
 task_directory=$2
 task_script=$3
+NBLOCKS=$4
 cur_path=$(readlink -f "$(dirname "$0")")
 
     # sche
@@ -22,7 +23,7 @@ unset MALLOC_PERTURB_
 
     # size
 INCR=2
-STOP=64
+STOP=$NBLOCKS
 
 # 2. 切换目标目录task_directory，生成prof_file__0
 cd "$task_directory" || exit 1
