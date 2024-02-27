@@ -78,20 +78,24 @@ def init_cond2perf():
 
     # read from txt
     txt_path_1 = f'{cur_path}/../3_gen_dif_env/{task_name}/dif_env_gflops.txt'
-    txt_path_2 = f'{cur_path}/../3_gen_dif_env/{task_name}/dif_env_gflops_2.txt'
+    # txt_path_2 = f'{cur_path}/../3_gen_dif_env/{task_name}/dif_env_gflops_2.txt'
 
-    df1 = pd.read_csv(txt_path_1, sep='\t', header=None, skiprows=2, engine='python')
-    df2 = pd.read_csv(txt_path_2, sep='\t', header=None, skiprows=1, engine='python')
-    merged_df = pd.concat([df1, df2], ignore_index=True)
-    xlsx_path = f"{cur_path}/{task_name}/graph2_unit_1.xlsx"
+    df1 = pd.read_csv(txt_path_1, sep='\t', header=None, skiprows=1, engine='python')
+    
+    df = df1
+    
+    # df2 = pd.read_csv(txt_path_2, sep='\t', header=None, skiprows=1, engine='python')
+    # merged_df = pd.concat([df1, df2], ignore_index=True)
+    # xlsx_path = f"{cur_path}/{task_name}/graph2_unit_1.xlsx"
 
-    merged_df.to_excel(xlsx_path, index=False)
-    df = pd.read_excel(xlsx_path)
+    # merged_df.to_excel(xlsx_path, index=False)
+    # df = pd.read_excel(xlsx_path)
 
     result = []
     temp = []
+    num_columns = df.shape[1]
     for index, row in df.iterrows():
-        for i in range(12):
+        for i in range(num_columns):
             temp.append(row[i])
         result.append(temp)
         temp = []
@@ -117,6 +121,8 @@ def init_cond2perf():
     def sort_second_small(a: list) -> float:
         selected_elements = a[6:-1]
         sorted_elements = sorted(selected_elements)
+        if len(sorted_elements) == 1:
+            return float(sorted_elements[0])
         return float(sorted_elements[1])
 
     # print(sort_second_small(result[0]))
@@ -173,9 +179,9 @@ def get_curconf_gflops(NBLOCKS, HARDWARE, SCHEDULE, N, Nskip, OPTARG):
     os.environ["CUDA_VISIBLE_DEVICES"] = TCUDA
     os.environ["STARPU_SCHED"] = SCHED
     os.environ["STARPU_HOSTNAME"] = f"{NBLOCKS}_{NCPU}_{NCUDA}_{TCUDA}_{SCHED}_{PRIOR}"
-    shutil.copy(f"{cur_path}/../2_gen_prior_res/cholesky/priors_abi/{NBLOCKS * 960}.txt", "/root/starpu_wpb/examples/cholesky/priors.txt")
-    shutil.copy(f"{cur_path}/../2_gen_prior_res/cholesky/priors_abi/{NBLOCKS * 960}.txt", "/root/starpu_wpb/examples/cholesky/priors_abi.txt")
-    shutil.copy(f"{cur_path}/../2_gen_prior_res/cholesky/priors_efi/{NBLOCKS * 960}.txt", "/root/starpu_wpb/examples/cholesky/priors_efi.txt")
+    shutil.copy(f"{cur_path}/../2_gen_prior_res/cholesky/priors_abi/{NBLOCKS * 960}.txt", f"{task_dir}/priors.txt")
+    shutil.copy(f"{cur_path}/../2_gen_prior_res/cholesky/priors_abi/{NBLOCKS * 960}.txt", f"{task_dir}/priors_abi.txt")
+    shutil.copy(f"{cur_path}/../2_gen_prior_res/cholesky/priors_efi/{NBLOCKS * 960}.txt", f"{task_dir}/priors_efi.txt")
     os.system(f"rm /root/.starpu/sampling/codelets/45/*")
     os.system(f"rm /root/.starpu/sampling/bus/*")
     
