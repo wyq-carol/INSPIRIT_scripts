@@ -11,12 +11,13 @@
 task_name=$1
 task_directory=$2
 task_script=$3
+NBLOCKS=$4
 cur_path=$(readlink -f "$(dirname "$0")")
 
     # size
 START=2
 INCR=2
-STOP=64
+STOP=$NBLOCKS
 
 # 2. 生成不同参数表现的优先级
 for size in $(seq $START $INCR $STOP); do

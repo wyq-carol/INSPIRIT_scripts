@@ -30,7 +30,6 @@ type2time = {
     "SYRK": 2.051288e+02,
     "GEMM": 1.475663e+02
 }
-
 import  os
 
 cur_path = os.getcwd()
@@ -72,22 +71,22 @@ def get_node_type():
 
 # 传入参数k计算节点的启发能力
 def get_inspire_abi(k):
-    # def calculate_k_steps(node, k):
-    #     if k == 0:
-    #         return [node]  # 当k为0时，节点本身就是一个后k步节点
-    #     if node not in graph:
-    #         return []  # 如果节点不存在于图中，返回空列表
-    #     result = []
-    #     for child in graph[node]:
-    #         child_k_steps = calculate_k_steps(child, k - 1)
-    #         result.extend(child_k_steps)
-    #     return result
-    # # 计算每个节点的后k步节点数
-    # for node in graph:
-    #     node2kchildren[node] = []
-    #     for i in range(1, k+1):
-    #         node2kchildren[node].extend(calculate_k_steps(node, i))
-    #     node2kchildren[node] = list(set(node2kchildren[node]))
+    def calculate_k_steps(node, k):
+        if k == 0:
+            return [node]  # 当k为0时，节点本身就是一个后k步节点
+        if node not in graph:
+            return []  # 如果节点不存在于图中，返回空列表
+        result = []
+        for child in graph[node]:
+            child_k_steps = calculate_k_steps(child, k - 1)
+            result.extend(child_k_steps)
+        return result
+    # 计算每个节点的后k步节点数
+    for node in graph:
+        node2kchildren[node] = []
+        for i in range(1, k+1):
+            node2kchildren[node].extend(calculate_k_steps(node, i))
+        node2kchildren[node] = list(set(node2kchildren[node]))
     
     from collections import deque
     def get_all_successors(graph):
@@ -157,10 +156,10 @@ def get_inspire_efi(bound):
 # 根据启发能力和启发效率综合生成优先级
 def gen_prior():
     # 根据启发能力和启发效率生成优先级 TODO
-    alpha = 1 # 0.018
-    beta = 0
+    alpha = 0 # 0.018
+    beta = 1
     for node in graph:
-        node2prior[node] = math.floor(alpha * node2inspireAbi[node])
+        node2prior[node] = math.floor(beta * node2inspireEfi[node])
         # node2prior[node] = math.floor(alpha * node2inspireAbi[node] + beta * node2inspireEfi[node])
         # node2prior[node] = beta * node2inspireEfi[node]
 
@@ -191,7 +190,7 @@ if __name__ == "__main__":
     #     print(f"Node {node}: {task_type}")
     
     # 启发能力
-    get_inspire_abi(k)
+    # get_inspire_abi(k)
     # node2inspireAbi = dict(sorted(node2inspireAbi.items()))
     # for node, ability in node2inspireAbi.items():
     #     print(f"Node {node}: {ability} nodes in {k} steps")
@@ -205,7 +204,7 @@ if __name__ == "__main__":
     
     # 启发效率
     # get_inspire_efi(k, type)
-    # get_inspire_efi(bound)
+    get_inspire_efi(bound)
     # for node, children in node2timechildren.items():
     #     print(f"Node {node} Type {node2type[node]}: len {len(children)} {children} in time bound")
     # node2inspireEfi = dict(sorted(node2inspireEfi.items()))
@@ -225,12 +224,9 @@ if __name__ == "__main__":
     node2prior = new_dict
     sorted_priors = dict(sorted(node2prior.items()))
 
-
     # 获取排序后的值数组
     priors = list(sorted_priors.values())
 
     # 将列表转换为字符串，去掉空格，然后再转回列表
     formatted_priors = str(priors).replace(" ", "")
-    
     print(formatted_priors)
-    
