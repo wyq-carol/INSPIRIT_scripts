@@ -250,7 +250,7 @@ if __name__ == "__main__":
                 
                 for OPTARG in opt_args:
                     # generate gflops
-                    avg_gflops1 = get_curconf_gflops(NBLOCKS, HARDWARE, SCHEDULE, N, Nskip, OPTARG)
+                    avg_gflops1 = get_curconf_gflops(NBLOCKS, HARDWARE, SCHEDULE, N, N_skip, OPTARG)
                     if avg_gflops1 > baseline_best_gflops:
                         with open(log_dir, "a") as log_file:
                             log_file.write(f"[FOUND!!!] {avg_gflops1}\n") 
