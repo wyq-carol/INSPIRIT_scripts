@@ -12,18 +12,19 @@ parser.add_argument('--N', type=int, default=10, required=False)
 parser.add_argument('--N_skip', type=int, default=5, required=False) # warmup
 parser.add_argument('--task_dir', type=str, default="/root/INSPIRIT/examples/cholesky", required=False)
 parser.add_argument('--task_script', type=str, default="cholesky_implicit", required=False)
-parser.add_argument('--res_dir', type=str, default=f"{cur_path}/cholesky", required=False)
+parser.add_argument('--task_name', type=str, default="cholesky", required=False)
 parser.add_argument('--res_name', type=str, default="dif_env_gflops.txt", required=False)
+parser.add_argument('--NBLOCKS', type=int, default=64, required=False)
 
 args = parser.parse_args()
 
 # 定义实验参数
-NBLOCKS = 64
+NBLOCKS = args.NBLOCKS
 N = args.N
 N_skip = args.N_skip
 task_dir = args.task_dir
 task_script = args.task_script                                     
-res_dir = args.res_dir
+res_dir = f"{cur_path}/{args.task_name}"
 res_name = args.res_name
 
 # 切换到 task_dir 目录

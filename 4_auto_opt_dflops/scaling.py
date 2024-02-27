@@ -3,21 +3,30 @@ import subprocess
 from datetime import datetime
 import shutil
 import math
+import argparse
 cur_path = os.getcwd()
 
-scale_size = [
-        2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
-        22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
-        42, 44, 46, 48, 50, 52, 54, 56, 58, 60,
-        62, 64
-    ]
-N = 4 # 设置多次实验次数
-Nskip = 3 # 设置跳过的实验次数
-task_name="cholesky"
-task_dir = f"/root/INSPIRIT/examples/cholesky"
-task_script = "cholesky_implicit"
+parser = argparse.ArgumentParser()
+parser.add_argument('--N', type=int, default=4, required=False)
+parser.add_argument('--N_skip', type=int, default=3, required=False) # warmup
+parser.add_argument('--task_dir', type=str, default="/root/INSPIRIT/examples/cholesky", required=False)
+parser.add_argument('--task_script', type=str, default="cholesky_implicit", required=False)
+parser.add_argument('--task_name', type=str, default="cholesky", required=False)
+parser.add_argument('--res_name', type=str, default="commands.log", required=False)
+parser.add_argument('--NBLOCKS', type=int, default=64, required=False)
+args = parser.parse_args()
+
+NBLOCKS = args.NBLOCKS
+scale_size = [int(2 * (i + 1)) for i in range(NBLOCKS//2)]
+
+
+N = args.N # 设置多次实验次数
+N_skip = args.N_skip # 设置跳过的实验次数
+task_dir = args.task_dir
+task_script = args.task_script      
+task_name = args.task_name                                
 res_dir = f"{cur_path}/{task_name}"
-log_dir = f"{res_dir}/commands.log"
+log_dir = f"{res_dir}/{args.res_name}"
 
 hardware_env = [
     (NCPU, NCUDA, TCUDA)
@@ -89,12 +98,12 @@ def init_cond2perf():
     result.sort(key=lambda x: (x[0], x[1], -x[2]))
 
     # init key
-    scale_size = [
-        2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
-        22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
-        42, 44, 46, 48, 50, 52, 54, 56, 58, 60,
-        62, 64
-    ]
+    # scale_size = [
+    #     2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
+    #     22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
+    #     42, 44, 46, 48, 50, 52, 54, 56, 58, 60,
+    #     62, 64
+    # ]
     hardware_env = [
         (NCPU, NCUDA, TCUDA)
         for (NCPU, NCUDA, TCUDA) in [(0, 2, "0,1"), (26, 2, "0,1"), (26, 1, "0"), (26, 1, "1")]
